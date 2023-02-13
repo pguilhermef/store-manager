@@ -7,12 +7,12 @@ const getAllProductsModel = async () => {
 };
 
 const getProductByIdModel = async (productId) => {
-  const query = 'SELECT * PRODUCT WHERE id = ?';
+  const query = 'SELECT * PRODUCT WHERE id = ? ORDER BY id ASC';
   const productFinded = await connection.execute(query, [productId]);
   return productFinded;
 };
 
-export {
-  getAllProducts,
-  getProductById,
+module.exports = {
+  getAllProductsModel,
+  getProductByIdModel,
 };
