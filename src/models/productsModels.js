@@ -7,7 +7,7 @@ const getAllProductsModel = async () => {
 };
 
 const getProductByIdModel = async (productId) => {
-  const query = 'SELECT * PRODUCT WHERE id = ? ORDER BY id ASC';
+  const query = 'SELECT * FROM StoreManager.products WHERE id = ? ORDER BY id ASC';
   const [[productFinded]] = await connection.execute(query, [productId]);
   return productFinded;
 };
