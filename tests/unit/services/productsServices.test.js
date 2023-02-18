@@ -15,7 +15,8 @@ describe('Testa o service de products', () => {
 
   it('Lista produtos buscados por ID corretamente', async () => {
     sinon.stub(productsModels, 'getProductByIdModel').resolves(allProductsResponse[0])
-    const result = productsServices.getProductByIdService(1)
+    const result = await productsServices.getProductByIdService(1)
+    expect(result).to.be.deep.equal(allProductsResponse[0])
   });
 
   it('Retorna um 404 caso não exista um produto com o ID buscado', async () => {});
