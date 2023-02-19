@@ -12,7 +12,22 @@ const getProductByIdModel = async (productId) => {
   return productFinded;
 };
 
+const createNewProductModel = async (product) => {
+  const colums = Object.keys(product).join(', ');
+
+  const placeholders = Object.keys(product)
+    .map((_key) => '?')
+    .join(', ');
+  
+  const query = `INSERT INTO StorageManager.products (${colums}) VALUES (${placeholders})`;
+
+  const [{ insertId }] = await connection.execute(query, [...Object.values(product)]);
+  
+  return insertId;
+};
+
 module.exports = {
   getAllProductsModel,
   getProductByIdModel,
+  createNewProductModel,
 };
