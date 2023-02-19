@@ -21,7 +21,17 @@ const getProductByIdController = async (req, res) => {
     .json(productFinded);
 };
 
+const createNewProductController = async (req, res) => {
+  const { name } = req.body;
+  const createdProduct = await productsServices.createNewProductService(name);
+
+  return res
+    .status(httpCodes.CREATED.code)
+    .json({ createdProduct });
+};
+
 module.exports = {
   getAllProductsController,
   getProductByIdController,
+  createNewProductController,
 };
