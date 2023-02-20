@@ -19,7 +19,7 @@ const createNewProductModel = async (product) => {
     .map((_key) => '?')
     .join(', ');
   
-  const query = `INSERT INTO StorageManager.products (${colums}) VALUES (${placeholders})`;
+  const query = `INSERT INTO StoreManager.products (${colums}) VALUES (${placeholders})`;
 
   const [{ insertId }] = await connection.execute(query, [...Object.values(product)]);
   
