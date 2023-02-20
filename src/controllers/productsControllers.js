@@ -27,7 +27,7 @@ const createNewProductController = async (req, res) => {
 
   return res
     .status(httpCodes.CREATED.code)
-    .json({ createdProduct });
+    .json(createdProduct);
 };
 
 module.exports = {
