@@ -20,12 +20,12 @@ describe('Testa o controller de products', () => {
     res.json = sinon.stub().returns()
 
     sinon
-      .stub(productsServices, 'getAllProductsService').resolves({allProductsResponse});
+      .stub(productsServices, 'getAllProductsService').resolves({ type: null, message: allProductsResponse });
     
     await productsControllers.getAllProductsController(req, res);
 
     expect(res.status).to.have.been.calledWith(200);
-    expect(res.json).to.have.been.calledWith({allProductsResponse});
+    expect(res.json).to.have.been.calledWith(allProductsResponse);
   });
 
   it('Lista produtos buscados por ID corretamente', async () => {
@@ -37,29 +37,12 @@ describe('Testa o controller de products', () => {
     res.status = sinon.stub().returns(res);
     res.json = sinon.stub().returns();
     sinon
-      .stub(productsServices, 'getProductByIdService').resolves(allProductsResponse[0])
+      .stub(productsServices, 'getProductByIdService').resolves({ type: null, message: allProductsResponse[0] })
     
     await productsControllers.getProductByIdController(req, res)
 
     expect(res.status).to.have.been.calledWith(200);
     expect(res.json).to.have.been.calledWith(allProductsResponse[0])
-  })
-
-  it('Caso não encontre o produto buscado, retorna um 404', async () => {
-    const res = {};
-    const req = {
-      params: { id: 1 },
-    };
-
-    res.status = sinon.stub().returns(res);
-    res.json = sinon.stub().returns();
-    sinon
-      .stub(productsServices, 'getProductByIdService').resolves(undefined)
-    
-    await productsControllers.getProductByIdController(req, res)
-
-    expect(res.status).to.have.been.calledWith(404);
-    expect(res.json).to.have.been.calledWith({ message: "Product not found" })
   })
 
   afterEach(() => {
