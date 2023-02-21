@@ -8,7 +8,7 @@ const getAllProductsService = async () => {
 
 const getProductByIdService = async (productId) => {
   const error = schema.validateId(productId);
-  if (error.type) return error.message;
+  if (error.type) return error;
 
   const productFinded = await productsModels.getProductByIdModel(productId);
   if (!productFinded) return { type: 'PRODUCT_NOT_FOUND', message: 'Product not found' };
@@ -18,7 +18,7 @@ const getProductByIdService = async (productId) => {
 
 const createNewProductService = async (name) => {
   const error = schema.validateProductName(name);
-  if (error.type) return error.message;
+  if (error.type) return { type: error.type, message: error.message };
 
   // cria o produto por de trás dos panos e retorna a busca por Id do produto buscado
   const newProductId = await productsModels.createNewProductModel({ name });

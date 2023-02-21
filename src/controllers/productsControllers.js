@@ -1,33 +1,33 @@
 const productsServices = require('../services/productsServices');
-const httpCodes = require('./httpCodes');
+const errorMap = require('../utils/errorMap');
 
 const getAllProductsController = async (_req, res) => {
-  const allProducts = await productsServices.getAllProductsService();
+  const { message } = await productsServices.getAllProductsService();
   return res
-    .status(httpCodes.OK.code)
-    .json(allProducts);
+    .status(200)
+    .json(message);
 };
 
 const getProductByIdController = async (req, res) => {
   const { id } = req.params;
-  const productFinded = await productsServices.getProductByIdService(id);
-  if (!productFinded) {
-    return res
-      .status(httpCodes.NOT_FOUND.code)
-      .json({ message: httpCodes.NOT_FOUND.message });
-  }
+  const { type, message } = await productsServices.getProductByIdService(id);
+
+  if (type) return res.status(404).json({ message });
+
   return res
-    .status(httpCodes.OK.code)
-    .json(productFinded);
+    .status(200)
+    .json(message);
 };
 
 const createNewProductController = async (req, res) => {
   const { name } = req.body;
-  const createdProduct = await productsServices.createNewProductService(name);
+  const { type, message } = await productsServices.createNewProductService(name);
+
+  if (type) return res.status(errorMap.mapError(type)).json({ message });
 
   return res
-    .status(httpCodes.CREATED.code)
-    .json(createdProduct);
+    .status(201)
+    .json(message);
 };
 
 module.exports = {
