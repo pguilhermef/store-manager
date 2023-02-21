@@ -19,6 +19,12 @@ describe('Testa o service de products', () => {
     expect(result.message).to.be.deep.equal(allProductsResponse[0])
   });
 
+  it('Caso não encontre o produto buscado, retorna um 404', async () => {
+    sinon.stub(productsModels, 'getProductByIdModel').resolves(undefined)
+    const result = await productsServices.getProductByIdService(8)
+    expect(result.message).to.be.deep.equal('Product not found')
+  })
+
   afterEach(() => {
     sinon.restore();
   })

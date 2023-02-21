@@ -45,6 +45,23 @@ describe('Testa o controller de products', () => {
     expect(res.json).to.have.been.calledWith(allProductsResponse[0])
   })
 
+  it('Caso não encontre o produto buscado, retorna um 404', async () => {
+    const res = {};
+    const req = {
+      params: { id: 1 },
+    };
+
+    res.status = sinon.stub().returns(res);
+    res.json = sinon.stub().returns();
+    sinon
+      .stub(productsServices, 'getProductByIdService').resolves({ type: 'PRODUCT_NOT_FOUND', message: 'Product not found'})
+    
+    await productsControllers.getProductByIdController(req, res)
+
+    expect(res.status).to.have.been.calledWith(404);
+    expect(res.json).to.have.been.calledWith({ message: "Product not found" })
+  })
+
   afterEach(() => {
     sinon.restore();
   })
