@@ -19,6 +19,12 @@ describe('Testa a model de products', () => {
     expect(result).to.be.deep.equal(allProductsResponse[0])
   })
 
+  it('Cria um novo produto com sucesso', async () => {
+    sinon.stub(connection, 'execute').resolves([{ insertId: 42 }])
+    const result = await productsModels.createNewProductModel('Escudo do Capitão América')
+    expect(result).to.be.deep.equal(42)
+  });
+
   afterEach(() => {
     sinon.restore();
   })
