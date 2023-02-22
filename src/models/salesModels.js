@@ -12,16 +12,25 @@ const getSaleByIdModel = async (saleId) => {
   return saleFinded;
 };
 
-const createNewSaleModel = async (sale) => {
-  const colums = Object.keys(sale).join(', ');
+const createNewSaleModel = async (sales) => {
+  // --------- Lógica de Query Dinâmica ---------
+  const colums = Object.keys(sales[0]).join(', ');
 
-  const placeholders = Object.keys(sale)
+  const placeholders = Object.keys(sales[0])
     .map((_key) => '?')
     .join(', ');
-  
-  const query = `INSERT INTO StoreManager.sales (${colums}) VALUES (${placeholders})`;
 
-  const [{ insertId }] = await connection.execute(query, [...Object.values(sale)]);
+  const salesLength = sales.map((_sale) => `(${placeholders})`).join(', ');
+
+  const valuesToTable = sales.reduce((acc, obj) => {
+    const objValores = Object.values(obj);
+    return [...acc, ...objValores];
+  }, []);
+
+  const query = `INSERT INTO StoreManager.sales (${colums}) VALUES ${salesLength};`;
+  // --------- Fim da Lógica de Query Dinâmica ---------
+
+  const [{ insertId }] = await connection.execute(query, [valuesToTable]);
   
   return insertId;
 };
