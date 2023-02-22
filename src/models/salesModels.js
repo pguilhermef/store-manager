@@ -12,31 +12,29 @@ const getSaleByIdModel = async (saleId) => {
   return saleFinded;
 };
 
-const createNewSaleModel = async (sales) => {
-  // --------- Lógica de Query Dinâmica ---------
-  const colums = Object.keys(sales[0]).join(', ');
+const createNewSaleDateModel = async () => {
+  const query = 'INSERT INTO StoreManager.sales (date) VALUE (NOW())';
+  const [{ insertId }] = await connection.execute(query);
+  return insertId;
+};
 
-  const placeholders = Object.keys(sales[0])
+const createNewSaleDetailsModel = async (sales) => {
+  const colums = Object.keys(sales).join(', ');
+
+  const placeholders = Object.keys(sales)
     .map((_key) => '?')
     .join(', ');
-
-  const salesLength = sales.map((_sale) => `(${placeholders})`).join(', ');
-
-  const valuesToTable = sales.reduce((acc, obj) => {
-    const objValores = Object.values(obj);
-    return [...acc, ...objValores];
-  }, []);
-
-  const query = `INSERT INTO StoreManager.sales (${colums}) VALUES ${salesLength};`;
-  // --------- Fim da Lógica de Query Dinâmica ---------
-
-  const [{ insertId }] = await connection.execute(query, [valuesToTable]);
   
-  return insertId;
+  const query = `INSERT INTO StoreManager.sales_products (${colums}) VALUES (${placeholders})`;
+
+  const itemsSold = await connection.execute(query, [...Object.values(sales)]);
+  
+  return itemsSold;
 };
 
 module.exports = {
   getAllSalesModel,
   getSaleByIdModel,
-  createNewSaleModel,
+  createNewSaleDateModel,
+  createNewSaleDetailsModel,
 };
