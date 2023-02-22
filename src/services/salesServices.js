@@ -21,9 +21,21 @@ const createNewSaleService = async (saleDetails) => {
   if (error.type) return { type: error.type, message: error.message };
 
   const idOfSale = await salesModels.createNewSaleDateModel();
-  const createdSaleWithDetails = await salesModels.createNewSaleDetailsModel(saleDetails);
+
+  await Promise.all(saleDetails
+    .map((eachSale) => {
+      const { productId, quantity } = eachSale;
+
+      return salesModels.createNewSaleDetailsModel({ idOfSale, productId, quantity });
+    }));
   
-  return { type: null, message: { id: idOfSale, itemsSold: createdSaleWithDetails } };
+  return {
+    type: null,
+    message: {
+      id: idOfSale,
+      itemsSold: saleDetails,
+    },
+  };
 };
 
 module.exports = {
