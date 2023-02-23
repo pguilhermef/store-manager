@@ -3,18 +3,38 @@ const salesModels = require('../models/salesModels');
 const schema = require('./validations/validationsInputValues');
 
 const getAllSalesService = async () => {
-  const allSales = await salesModels.getAllSalesModel();
+  const salesWithoutDate = await salesModels.getAllSalesModel();
+
+  const allSales = await Promise.all(salesWithoutDate.map(async (sale) => {
+    const [{ date }] = await salesModels.getSaleDateByIdModel(sale.saleId);
+    return {
+      saleId: sale.saleId,
+      date,
+      productId: sale.productId,
+      quantity: sale.quantity,
+    };
+  }));
+
   return { type: null, message: allSales };
 };
 
-const getSaleByIdService = async (saleId) => {
-  const error = schema.validateId(saleId);
+const getSaleByIdService = async (idzada) => {
+  const error = schema.validateId(idzada);
   if (error.type) return error;
 
-  const saleFinded = await salesModels.getSaleByIdModel(saleId);
-  if (!saleFinded) return { type: 'SALE_NOT_FOUND', message: 'Sale not found' };
+  const allSales = await getAllSalesService();
 
-  return { type: null, message: saleFinded };
+  const filteredSales = allSales.message.filter((sale) => sale.saleId === Number(idzada));
+
+  if (!filteredSales.length) return { type: 'SALE_NOT_FOUND', message: 'Sale not found' };
+
+  const sale = filteredSales.map((filteredSale) => ({
+      date: filteredSale.date,
+      productId: filteredSale.productId,
+      quantity: filteredSale.quantity,
+    }));
+
+  return { type: null, message: sale };
 };
 
 const createNewSaleService = async (saleDetails) => {

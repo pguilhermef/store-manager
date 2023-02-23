@@ -1,16 +1,23 @@
+const camelize = require('camelize');
 const connection = require('./connection');
 
+const getSaleDateByIdModel = async (saleId) => {
+  const query = 'SELECT date FROM StoreManager.sales WHERE id = ?';
+  const [saleDates] = await connection.execute(query, [saleId]);
+  return camelize(saleDates);
+};
+
 const getAllSalesModel = async () => {
-  const query = 'SELECT * FROM StoreManager.sales';
+  const query = 'SELECT * FROM StoreManager.sales_products';
   const [allSales] = await connection.execute(query);
-  return allSales;
+  return camelize(allSales);
 };
 
 const getSaleByIdModel = async (saleId) => {
   const query = `SELECT * FROM StoreManager.sales_products
   WHERE sale_id = ? ORDER BY sale_id, product_id ASC`;
   const [[saleFinded]] = await connection.execute(query, [saleId]);
-  return saleFinded;
+  return camelize(saleFinded);
 };
 
 const createNewSaleDateModel = async () => {
@@ -37,4 +44,5 @@ module.exports = {
   getSaleByIdModel,
   createNewSaleDateModel,
   createNewSaleDetailsModel,
+  getSaleDateByIdModel,
 };
