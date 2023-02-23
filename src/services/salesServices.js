@@ -1,3 +1,4 @@
+const { getProductByIdModel } = require('../models/productsModels');
 const salesModels = require('../models/salesModels');
 const schema = require('./validations/validationsInputValues');
 
@@ -20,21 +21,21 @@ const createNewSaleService = async (saleDetails) => {
   const error = schema.validateSale(saleDetails);
   if (error.type) return { type: error.type, message: error.message };
 
+  const checkProductId = await Promise.all(saleDetails
+    .map(async (sale) => getProductByIdModel(sale.productId)));
+  if (checkProductId.some((product) => !product)) {
+    return { type: 'PRODUCT_NOT_FOUND', message: 'Product not found' };
+  }
+
   const idOfSale = await salesModels.createNewSaleDateModel();
 
-  await Promise.all(saleDetails
-    .map((eachSale) => {
+  await Promise.all(saleDetails.map((eachSale) => {
       const { productId, quantity } = eachSale;
 
       return salesModels.createNewSaleDetailsModel({ idOfSale, productId, quantity });
     }));
   
-  return {
-    type: null,
-    message: {
-      id: idOfSale,
-      itemsSold: saleDetails,
-    },
+  return { type: null, message: { id: idOfSale, itemsSold: saleDetails },
   };
 };
 
