@@ -1,16 +1,16 @@
-const productsServices = require('../services/productsServices');
+const salesServices = require('../services/salesServices');
 const errorMap = require('../utils/errorMap');
 
-const getAllProductsController = async (_req, res) => {
-  const { message } = await productsServices.getAllProductsService();
+const getAllSalesController = async (_req, res) => {
+  const { message } = await salesServices.getAllSalesService();
   return res
     .status(200)
     .json(message);
 };
 
-const getProductByIdController = async (req, res) => {
+const getSaleByIdController = async (req, res) => {
   const { id } = req.params;
-  const { type, message } = await productsServices.getProductByIdService(id);
+  const { type, message } = await salesServices.getSaleByIdService(id);
 
   if (type) return res.status(404).json({ message });
 
@@ -19,9 +19,8 @@ const getProductByIdController = async (req, res) => {
     .json(message);
 };
 
-const createNewProductController = async (req, res) => {
-  const { name } = req.body;
-  const { type, message } = await productsServices.createNewProductService(name);
+const createNewSaleController = async (req, res) => {
+  const { type, message } = await salesServices.createNewSaleService(req.body);
 
   if (type) return res.status(errorMap.mapError(type)).json({ message });
 
@@ -31,7 +30,7 @@ const createNewProductController = async (req, res) => {
 };
 
 module.exports = {
-  getAllProductsController,
-  getProductByIdController,
-  createNewProductController,
+  getAllSalesController,
+  getSaleByIdController,
+  createNewSaleController,
 };
