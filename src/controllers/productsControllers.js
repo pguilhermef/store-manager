@@ -30,8 +30,21 @@ const createNewProductController = async (req, res) => {
     .json(message);
 };
 
+const updateProductController = async (req, res) => {
+  const { name } = req.body;
+  const { id } = req.params;
+  const { type, message } = await productsServices.updateProductService(name, id);
+
+  if (type) return res.status(errorMap.mapError(type)).json({ message });
+
+  return res
+    .status(200)
+    .json(message);
+};
+
 module.exports = {
   getAllProductsController,
   getProductByIdController,
   createNewProductController,
+  updateProductController,
 };
